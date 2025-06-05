@@ -1,3 +1,4 @@
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class Plant {
@@ -7,19 +8,21 @@ public class Plant {
     private LocalDate planted;
     private LocalDate watering;
     private Integer frequencyOfWatering;
+    private BigDecimal frequencyOfWateringException = BigDecimal.ZERO;
 
-    public Plant(String name, String notes, LocalDate planted, LocalDate watering, Integer frequencyOfWatering) {
+    public Plant(String name, String notes, LocalDate planted, LocalDate watering, Integer frequencyOfWatering) throws PlantException {
         this.name = name;
         this.notes = notes;
         this.planted = planted;
         this.watering = watering;
         this.frequencyOfWatering = frequencyOfWatering;
+        setFrequencyOfWateringException(frequencyOfWateringException);
     }
 
     public String getWateringInfo() {
         LocalDate nextWatering = watering.plusDays(frequencyOfWatering);
-        return ("Rostlina" + name + "mela posledni zalivku dne" + watering + "/n " +
-                "je doporucena dalsi zalivka dne : " + nextWatering);
+        return ("Plant" + name + "had the last watering of the day." + watering + "/n " +
+                " the next recommended watering must be: " + nextWatering + "Days");
 
     }
 
@@ -76,4 +79,10 @@ public class Plant {
     public void setFrequencyOfWatering(Integer frequencyOfWatering) {
         this.frequencyOfWatering = frequencyOfWatering;
     }
+
+    public void setFrequencyOfWateringException(BigDecimal frequencyOfWateringException) throws PlantException {
+        if(frequencyOfWateringException.compareTo(BigDecimal.ZERO)<=0)
+            throw new PlantException(" Frequency cannot  negativ or Zero");
+             this.frequencyOfWatering = frequencyOfWatering;
+            }
 }
