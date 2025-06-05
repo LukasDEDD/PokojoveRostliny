@@ -9,6 +9,9 @@ public class Plant {
     private LocalDate watering;
     private Integer frequencyOfWatering;
     private BigDecimal frequencyOfWateringException = BigDecimal.ZERO;
+    private LocalDate dateOfLastWatering = planted;
+
+
 
     public Plant(String name, String notes, LocalDate planted, LocalDate watering, Integer frequencyOfWatering) throws PlantException {
         this.name = name;
@@ -17,12 +20,13 @@ public class Plant {
         this.watering = watering;
         this.frequencyOfWatering = frequencyOfWatering;
         setFrequencyOfWateringException(frequencyOfWateringException);
+        setDateOfLastWatering(dateOfLastWatering);
     }
 
     public String getWateringInfo() {
         LocalDate nextWatering = watering.plusDays(frequencyOfWatering);
-        return ("Plant" + name + "had the last watering of the day." + watering + "/n " +
-                " the next recommended watering must be: " + nextWatering + "Days");
+        return ("Plant" + name + "had the last watering on" + watering + " \n " +
+                " The next recommended watering is on: " + nextWatering + ".");
 
     }
 
@@ -82,7 +86,13 @@ public class Plant {
 
     public void setFrequencyOfWateringException(BigDecimal frequencyOfWateringException) throws PlantException {
         if(frequencyOfWateringException.compareTo(BigDecimal.ZERO)<=0)
-            throw new PlantException(" Frequency cannot  negativ or Zero");
-             this.frequencyOfWatering = frequencyOfWatering;
+            throw new PlantException(" Frequency cannot  negative or Zero");
+        this.frequencyOfWateringException = frequencyOfWateringException;
             }
+
+    public void setDateOfLastWatering(LocalDate dateOfLastWatering) throws PlantException{
+        if (dateOfLastWatering.isBefore(planted))
+            throw new PlantException("the date must not be before the plant is planted");
+            this.dateOfLastWatering = dateOfLastWatering;
+    }
 }
