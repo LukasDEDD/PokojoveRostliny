@@ -1,12 +1,13 @@
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+
 public class Plant {
 
     private String name;
     private String notes;
     private LocalDate planted;
-    private LocalDate watering;
+    public LocalDate watering;
     private Integer frequencyOfWatering;
     private BigDecimal frequencyOfWateringException = BigDecimal.ZERO;
     private LocalDate dateOfLastWatering = planted;
@@ -22,6 +23,9 @@ public class Plant {
         setFrequencyOfWateringException(frequencyOfWateringException);
         setDateOfLastWatering(dateOfLastWatering);
     }
+
+
+
 
     public String getWateringInfo() {
         LocalDate nextWatering = watering.plusDays(frequencyOfWatering);

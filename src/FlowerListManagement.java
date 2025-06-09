@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,10 +18,14 @@ public class FlowerListManagement {
     public List<FlowerListManagement> getflowers() {
         return new ArrayList<>(flowers); }
 
+    public void whenToWaterPlant (Plant water) {
+        LocalDate nextWatering = water.getWatering().plusDays(water.getFrequencyOfWatering());
+        if (water.getWatering().isBefore(nextWatering)) {
+            System.out.println("Je čas zalít rostlinu: " + water.getName());
+        }
+    }
 
-}
-
-
+    };
 
 
 
