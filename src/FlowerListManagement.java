@@ -20,8 +20,9 @@ public class FlowerListManagement {
 
     public void whenToWaterPlant (Plant water) {
         LocalDate nextWatering = water.getWatering().plusDays(water.getFrequencyOfWatering());
-        if (water.getWatering().isBefore(nextWatering)) {
+        if (water.getWatering().isBefore(nextWatering) || water.getWatering().equals(nextWatering)) {
             System.out.println("Je čas zalít rostlinu: " + water.getName());
+
         }
     }
 
