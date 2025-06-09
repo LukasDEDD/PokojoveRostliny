@@ -1,5 +1,6 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class FlowerListManagement {
@@ -45,6 +46,10 @@ public class FlowerListManagement {
         } else {
             System.out.println("Není třeba ještě zalévat: " + flower.getName());
         }
+    }
+
+    public void sortFlowers() {
+        flowers.sort(Comparator.comparing(Plant::getName).thenComparing(Plant::getWatering));
     }
 }
 
