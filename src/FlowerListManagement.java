@@ -1,34 +1,79 @@
+import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Scanner;
 
 public class FlowerListManagement {
 
-    private List<Plant> flowers = new ArrayList<>();
+    private List<Plant> plants = new ArrayList<>();
 
-    public void addFlower(Plant flower) {
-        flowers.add(flower);
+    public Plant getPlant(int index) {
+        return plants.get(index);
     }
 
-    public Plant getFlower(int index) {
-        return flowers.get(index);
+    public void addPlant(Plant plant) {
+        plants.add(plant);
+
     }
 
-    public void removeFlower(int index) {
-        flowers.remove(index);
+    public void removePlant(Plant plant) {
+        plants.remove(plant);
+
     }
 
-    public List<Plant> getFlowers() {
-        return new ArrayList<>(flowers);
+    public void addAllPlants(List<Plant> plants) {
+        this.plants.addAll(plants);
     }
+
+    public List<Plant> getAllPlants() {
+        return new ArrayList<>(plants);
+    }
+
+
+    public List<Plant> getPlants() {
+        return new ArrayList<>(plants);
+
+    }
+
+    public void readFromTextFile(String filePath, String delimiter) throws PlantException {
+        int lineNumber = 0;
+        try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
+            plants.clear();
+            while (scanner.hasNextLine()) {
+                lineNumber++;
+                String record = scanner.nextLine();
+                if (!record.isEmpty()) {
+                    String[] parts = record.split(delimiter);
+                    Plant plant = new Plant(parts,lineNumber);
+                    plants.add(plant);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new PlantException("Soubor '" + filePath + "' nelze otevřít: " + e.getLocalizedMessage());
+        }
+    }
+
+    public void writeToTextFile(String filePath, String delimiter) throws PlantException {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(
+                new FileWriter(filePath)))) {
+            for (Plant plant : plants) {
+                writer.println(plant.toTextRecord(delimiter));
+            }
+        } catch (IOException e) {
+            throw new PlantException("Chyba při zápisu do souboru: "
+                    + e.getMessage());
+            }
+        }
+
 
     //  Metoda, která vrací seznam rostlin, které je třeba zalít
     public List<Plant> getFlowersToWater() {
         List<Plant> flowersToWater = new ArrayList<>();
         LocalDate today = LocalDate.now();
 
-        for (Plant flower : flowers) {
+        for (Plant flower : plants) {
             LocalDate nextWatering = flower.getWatering().plusDays(flower.getFrequencyOfWatering());
             if (!nextWatering.isAfter(today)) { // pokud je datum zalévání dnes nebo dřív
                 flowersToWater.add(flower);
@@ -49,7 +94,7 @@ public class FlowerListManagement {
     }
 
     public void sortFlowers() {
-        flowers.sort(Comparator.comparing(Plant::getName).thenComparing(Plant::getWatering));
+        plants.sort(Comparator.comparing(Plant::getName).thenComparing(Plant::getWatering));
     }
 }
 

@@ -2,7 +2,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 
-public class Plant {
+public class Plant implements Comparable<Plant> {
 
     private String name;
     private String notes;
@@ -13,8 +13,8 @@ public class Plant {
     private LocalDate dateOfLastWatering = planted;
 
 
-
-    public Plant(String name, String notes, LocalDate planted, LocalDate watering, Integer frequencyOfWatering) throws PlantException {
+    public Plant(String name, String notes, LocalDate planted, LocalDate watering, Integer frequencyOfWatering)
+            throws PlantException {
         this.name = name;
         this.notes = notes;
         this.planted = planted;
@@ -24,79 +24,125 @@ public class Plant {
         setDateOfLastWatering(dateOfLastWatering);
     }
 
-
-
-
-    public String getWateringInfo() {
-        LocalDate nextWatering = watering.plusDays(frequencyOfWatering);
-        return ("Plant" + name + "had the last watering on" + watering + " \n " +
-                " The next recommended watering is on: " + nextWatering + ".");
+    public Plant(String name) {
+        this.name = name;
+        frequencyOfWatering = 7;
 
     }
 
-    public void doWateringNow() {
-        this.watering = LocalDate.now();
-    }
+
+    public Plant(String[] textValues, int lineNumber) throws PlantException {
+        final int EXPECTED_LENGTH = 3;
+        if (textValues.length != EXPECTED_LENGTH) {
+            throw new PlantException(
+                    "Řádek" + lineNumber + " musí mit " + EXPECTED_LENGTH
+                            + " hodnot: " + textValues);
+        }
+}
+
+        public String getWateringInfo () {
+            LocalDate nextWatering = watering.plusDays(frequencyOfWatering);
+            return ("Rostlina" + name + "Byla napsledy zalevana" + watering + " \n " +
+                    " Doporucene pristi zalivani je: " + nextWatering + ".");
+
+        }
+
+        public void doWateringNow () {
+            this.watering = LocalDate.now();
+        }
 
     public Plant() {
-        this.notes = "";planted = LocalDate.now();watering = LocalDate.now();
+            this.notes = "";
+            planted = LocalDate.now();
+            watering = LocalDate.now();
 
-}
+        }
 
-    public Plant( String name) {
-        this.name = name;frequencyOfWatering = 7;
+        public String getNotes () {
+            return notes;
+        }
 
-    }
+        public void setNotes (String notes){
+            this.notes = notes;
+        }
 
-    public String getNotes() {
-        return notes;
-    }
+        public String getName () {
+            return name;
+        }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
+        public void setName (String name){
+            this.name = name;
+        }
 
-    public String getName() {
-        return name;
-    }
+        public LocalDate getPlanted () {
+            return planted;
+        }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+        public void setPlanted (LocalDate planted){
+            this.planted = planted;
+        }
 
-    public LocalDate getPlanted() {
-        return planted;
-    }
+        public LocalDate getWatering () {
+            return watering;
+        }
 
-    public void setPlanted(LocalDate planted) {
-        this.planted = planted;
-    }
+        public void setWatering (LocalDate watering){
+            this.watering = watering;
+        }
 
-    public LocalDate getWatering() {
-        return watering;
-    }
+        public Integer getFrequencyOfWatering () {
+            return frequencyOfWatering;
+        }
 
-    public void setWatering(LocalDate watering) {
-        this.watering = watering;
-    }
+        public void setFrequencyOfWatering (Integer frequencyOfWatering){
+            this.frequencyOfWatering = frequencyOfWatering;
+        }
 
-    public Integer getFrequencyOfWatering() {
-        return frequencyOfWatering;
-    }
+        public void setFrequencyOfWateringException (BigDecimal frequencyOfWateringException) throws PlantException {
+            if (frequencyOfWateringException.compareTo(BigDecimal.ZERO) <= 0)
+                throw new PlantException(" Frekvence nemuze byt negativni nebo rovne nule");
+            this.frequencyOfWateringException = frequencyOfWateringException;
+        }
 
-    public void setFrequencyOfWatering(Integer frequencyOfWatering) {
-        this.frequencyOfWatering = frequencyOfWatering;
-    }
-
-    public void setFrequencyOfWateringException(BigDecimal frequencyOfWateringException) throws PlantException {
-        if(frequencyOfWateringException.compareTo(BigDecimal.ZERO)<=0)
-            throw new PlantException(" Frequency cannot  negative or Zero");
-        this.frequencyOfWateringException = frequencyOfWateringException;
-            }
-
-    public void setDateOfLastWatering(LocalDate dateOfLastWatering) throws PlantException{
-        if (dateOfLastWatering.isBefore(planted))
-            throw new PlantException("the date must not be before the plant is planted");
+        public void setDateOfLastWatering (LocalDate dateOfLastWatering) throws PlantException {
+            if (dateOfLastWatering.isBefore(planted))
+                throw new PlantException("Datum nemuze byt pred zasazenim rostliny");
             this.dateOfLastWatering = dateOfLastWatering;
+        }
+
+
+    @Override
+    public int compareTo(Plant other) {
+        return - name.compareTo(other.name);
     }
-}
+
+    public String toTextRecord(String delimiter) {
+        String result = ""
+                + name + delimiter
+                + notes + delimiter
+                + planted + delimiter
+                + watering + delimiter
+                + frequencyOfWatering + delimiter
+                + frequencyOfWateringException + delimiter
+                + dateOfLastWatering + delimiter ;
+        return result;
+    }
+
+    @Override
+        public String toString () {
+            return "Plant{" +
+                    "name='" + name + '\'' +
+                    ", notes='" + notes + '\'' +
+                    ", planted=" + planted +
+                    ", watering=" + watering +
+                    ", frequencyOfWatering=" + frequencyOfWatering +
+                    ", frequencyOfWateringException=" + frequencyOfWateringException +
+                    ", dateOfLastWatering=" + dateOfLastWatering +
+                    '}';
+
+
+
+
+
+        }
+    }
