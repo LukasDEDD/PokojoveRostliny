@@ -1,5 +1,9 @@
-public class PlantException extends RuntimeException {
-    public PlantException(String Number) {
-        super("Cislo nemuze byt negativni nebo rovne nule");
+public class PlantException extends Exception {
+    public PlantException(String message) {
+        super(message);
+    }
+
+    public PlantException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

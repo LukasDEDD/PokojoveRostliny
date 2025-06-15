@@ -1,5 +1,8 @@
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.Locale;
 
 
 public class Plant implements Comparable<Plant> {
@@ -30,15 +33,36 @@ public class Plant implements Comparable<Plant> {
 
     }
 
-
     public Plant(String[] textValues, int lineNumber) throws PlantException {
         final int EXPECTED_LENGTH = 3;
         if (textValues.length != EXPECTED_LENGTH) {
             throw new PlantException(
-                    "Řádek" + lineNumber + " musí mit " + EXPECTED_LENGTH
-                            + " hodnot: " + textValues);
+                    "Řádek" + lineNumber + " musí mit " + EXPECTED_LENGTH + " hodnot: " + textValues);
+
         }
-}
+
+        try {
+            this.name = textValues[0].trim();
+            this.notes = textValues[1].trim();
+            this.planted = LocalDate.parse(textValues[2].trim());
+            this.watering = LocalDate.parse(textValues[3].trim());
+            this.frequencyOfWatering = Integer.parseInt(textValues[4].trim());
+            setFrequencyOfWateringException(new BigDecimal(textValues[5].trim()));
+            this.dateOfLastWatering = LocalDate.parse(textValues[6].trim());
+
+        }
+        catch (NumberFormatException e) {
+            throw new PlantException("Chyba pri převodu textoveho řetězce na číslo "
+                    + lineNumber + ": " + e.getMessage());
+        } catch (DateTimeParseException e) {
+            throw new PlantException("Chyba při parsování dat na řádku "
+                    + lineNumber + ": " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new PlantException("Chyba při parsování kategorie na řádku "
+                    + lineNumber + ": " + e.getMessage());
+
+        }
+    }
 
         public String getWateringInfo () {
             LocalDate nextWatering = watering.plusDays(frequencyOfWatering);
@@ -139,10 +163,6 @@ public class Plant implements Comparable<Plant> {
                     ", frequencyOfWateringException=" + frequencyOfWateringException +
                     ", dateOfLastWatering=" + dateOfLastWatering +
                     '}';
-
-
-
-
 
         }
     }
