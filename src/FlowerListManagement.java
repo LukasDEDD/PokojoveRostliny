@@ -1,9 +1,6 @@
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class FlowerListManagement {
 
@@ -39,20 +36,22 @@ public class FlowerListManagement {
 
     public void readFromTextFile(String filePath, String delimiter) throws PlantException {
         int lineNumber = 0;
+        String[] parts = null;
         try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
             plants.clear();
             while (scanner.hasNextLine()) {
                 lineNumber++;
                 String record = scanner.nextLine();
                 if (!record.isEmpty()) {
-                    String[] parts = record.split(delimiter);
-                    Plant plant = new Plant(parts,lineNumber);
+                    parts = record.split(delimiter);
+                    Plant plant = new Plant(parts, lineNumber);
                     plants.add(plant);
                 }
             }
         } catch (FileNotFoundException e) {
             throw new PlantException("Soubor '" + filePath + "' nelze otevřít: " + e.getLocalizedMessage());
         }
+        System.out.println("Line " + lineNumber + ": " + Arrays.toString(parts));
     }
 
     public void writeToTextFile(String filePath, String delimiter) throws PlantException {

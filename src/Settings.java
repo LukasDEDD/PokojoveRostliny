@@ -1,7 +1,7 @@
 public final class Settings {
 
     private static final String FILE_PATH = "resources/plantList.txt";
-    private static final String DELIMITER = "\\t";
+    private static final String DELIMITER = "\t";
 
     private Settings() {
 
