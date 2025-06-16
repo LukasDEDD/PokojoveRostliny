@@ -27,16 +27,16 @@ public class Main {
 
             System.out.println("Zápis byl úspěšný.");
 
+
+            manager.writeToTextFile(Settings.getNewFilePath(), Settings.getDelimiter());
+
+            System.out.println("Zápis do nového souboru také proběhl.");
+
         } catch (PlantException e) {
             System.err.println("Chyba při zápisu nebo úpravě: " + e.getMessage());
         }
 
-        try {
-            manager.writeToTextFile(Settings.getOriginalFilePath(), Settings.getDelimiter());
-            System.out.println("Zápis do souboru proběhl úspěšně: " + Settings.getOriginalFilePath());
-        } catch (PlantException e) {
-            System.err.println("Chyba při zápisu: " + e.getMessage());
-        }
+
     }
 }
 
