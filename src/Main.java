@@ -4,9 +4,11 @@ public class Main {
     public static void main(String[] args) {
         FlowerListManagement manager = new FlowerListManagement();
 
+
+
         try {
             manager.readFromTextFile(Settings.getOriginalFilePath(), Settings.getDelimiter());
-
+            manager.sortFlowers();
             for (Plant plant : manager.getAllPlants()) {
                 System.out.println(plant.getWateringInfo());
             }
@@ -15,6 +17,8 @@ public class Main {
         }
 
         try {
+
+
             manager.addPlant(new Plant("Ruze", "cervena", 7, LocalDate.of(2025, 8, 14), LocalDate.of(2025, 8, 14)));
 
             for (int i = 1; i <= 10; i++) {
@@ -22,6 +26,8 @@ public class Main {
             }
 
             manager.removePlant(2);
+
+            manager.sortFlowers();
 
 
             manager.writeToTextFile(Settings.getNewFilePath(), Settings.getDelimiter());
@@ -31,7 +37,6 @@ public class Main {
         } catch (PlantException e) {
             System.err.println("Chyba při zápisu nebo úpravě: " + e.getMessage());
         }
-
 
     }
 }
