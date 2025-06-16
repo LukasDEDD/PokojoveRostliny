@@ -15,9 +15,12 @@ public class FlowerListManagement {
 
     }
 
-    public void removePlant(Plant plant) {
-        plants.remove(plant);
-
+    public void removePlant(int index) throws  PlantException {
+        if (index < 0 || index > plants.size()) {
+            throw new PlantException("Neplatný index: " + index);
+        }
+        plants.remove(index);
+        System.out.println("Rostlina číslo " + (index + 1) + " byla prodána");
     }
 
     public void addAllPlants(List<Plant> plants) {
@@ -95,6 +98,7 @@ public class FlowerListManagement {
     public void sortFlowers() {
         plants.sort(Comparator.comparing(Plant::getName).thenComparing(Plant::getWatering));
     }
+
 }
 
 
