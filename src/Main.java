@@ -23,10 +23,6 @@ public class Main {
 
             manager.removePlant(2);
 
-            manager.writeToTextFile(Settings.getOriginalFilePath(), Settings.getDelimiter());
-
-            System.out.println("Zápis byl úspěšný.");
-
 
             manager.writeToTextFile(Settings.getNewFilePath(), Settings.getDelimiter());
 
