@@ -21,9 +21,9 @@ public class Main {
                 manager.addPlant(new Plant("Tulipan", "Tulipán na prodej " + i, 14, LocalDate.now(), LocalDate.now()));
             }
 
-            manager.removePlant(2);  // odstranění 3. rostliny (index 2)
+            manager.removePlant(2);
 
-            manager.writeToTextFile(Settings.getNewFilePath(), Settings.getDelimiter());
+            manager.writeToTextFile(Settings.getOriginalFilePath(), Settings.getDelimiter());
 
             System.out.println("Zápis byl úspěšný.");
 
@@ -32,8 +32,8 @@ public class Main {
         }
 
         try {
-            manager.writeToTextFile(Settings.getNewFilePath(), Settings.getDelimiter());
-            System.out.println("Zápis do souboru proběhl úspěšně: " + Settings.getNewFilePath());
+            manager.writeToTextFile(Settings.getOriginalFilePath(), Settings.getDelimiter());
+            System.out.println("Zápis do souboru proběhl úspěšně: " + Settings.getOriginalFilePath());
         } catch (PlantException e) {
             System.err.println("Chyba při zápisu: " + e.getMessage());
         }
