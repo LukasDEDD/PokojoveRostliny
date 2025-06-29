@@ -12,11 +12,10 @@ public class FlowerListManagement {
 
     public void addPlant(Plant plant) {
         plants.add(plant);
-
     }
 
-    public void removePlant(int index) throws  PlantException {
-        if (index < 0 || index > plants.size()) {
+    public void removePlant(int index) throws PlantException {
+        if (index < 0 || index >= plants.size()) {
             throw new PlantException("Neplatný index: " + index);
         }
         plants.remove(index);
@@ -31,10 +30,8 @@ public class FlowerListManagement {
         return new ArrayList<>(plants);
     }
 
-
     public List<Plant> getPlants() {
         return new ArrayList<>(plants);
-
     }
 
     public void readFromTextFile(String filePath, String delimiter) throws PlantException {
@@ -47,8 +44,19 @@ public class FlowerListManagement {
                 String record = scanner.nextLine();
                 if (!record.isEmpty()) {
                     parts = record.split(delimiter);
-                    Plant plant = new Plant(parts, lineNumber);
-                    plants.add(plant);
+                    try {
+                        // Nové pořadí: name, notes, frequency, watering, planted
+                        String name = parts[0].trim();
+                        String notes = parts[1].trim();
+                        Integer frequency = Integer.parseInt(parts[2].trim());
+                        LocalDate watering = LocalDate.parse(parts[3].trim());
+                        LocalDate planted = LocalDate.parse(parts[4].trim());
+
+                        Plant plant = new Plant(name, notes, planted, watering, frequency);
+                        plants.add(plant);
+                    } catch (Exception e) {
+                        throw new PlantException("Chyba na řádku " + lineNumber + ": " + e.getMessage(), e);
+                    }
                 }
             }
         } catch (FileNotFoundException e) {
@@ -58,26 +66,22 @@ public class FlowerListManagement {
     }
 
     public void writeToTextFile(String filePath, String delimiter) throws PlantException {
-        try (PrintWriter writer = new PrintWriter(new BufferedWriter(
-                new FileWriter(filePath)))) {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filePath)))) {
             for (Plant plant : plants) {
                 writer.println(plant.toTextRecord(delimiter));
             }
         } catch (IOException e) {
-            throw new PlantException("Chyba při zápisu do souboru: "
-                    + e.getMessage());
-            }
+            throw new PlantException("Chyba při zápisu do souboru: " + e.getMessage());
         }
+    }
 
-
-    //  Metoda, která vrací seznam rostlin, které je třeba zalít
     public List<Plant> getFlowersToWater() {
         List<Plant> flowersToWater = new ArrayList<>();
         LocalDate today = LocalDate.now();
 
         for (Plant flower : plants) {
             LocalDate nextWatering = flower.getWatering().plusDays(flower.getFrequencyOfWatering());
-            if (!nextWatering.isAfter(today)) { // pokud je datum zalévání dnes nebo dřív
+            if (!nextWatering.isAfter(today)) {
                 flowersToWater.add(flower);
             }
         }
@@ -85,21 +89,7 @@ public class FlowerListManagement {
         return flowersToWater;
     }
 
-    // Pomocná metoda: vypíše info o tom, zda je čas na zalití jedné rostliny
-    public void whenToWaterFlower(Plant flower) {
-        LocalDate nextWatering = flower.getWatering().plusDays(flower.getFrequencyOfWatering());
-        if (!nextWatering.isAfter(LocalDate.now())) {
-            System.out.println("Je čas zalít rostlinu: " + flower.getName());
-        } else {
-            System.out.println("Není třeba ještě zalévat: " + flower.getName());
-        }
-    }
-
     public void sortFlowers() {
         plants.sort(Comparator.comparing(Plant::getName).thenComparing(Plant::getWatering));
     }
-
 }
-
-
-
