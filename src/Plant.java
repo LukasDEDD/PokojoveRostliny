@@ -1,17 +1,16 @@
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 public class Plant implements Comparable<Plant> {
-
 
     private String name;
     private String notes;
     private Integer frequencyOfWatering;
     private LocalDate planted;
     private LocalDate watering;
-    private BigDecimal frequencyOfWateringException;
+    private Integer frequencyOfWateringException;
     private LocalDate dateOfLastWatering;
+
 
     public Plant(String name, String notes, Integer frequencyOfWatering, LocalDate planted, LocalDate watering)
             throws PlantException {
@@ -19,33 +18,32 @@ public class Plant implements Comparable<Plant> {
             throw new PlantException("Frekvence musí být vyšší než 0.");
         }
         if (watering.isBefore(planted)) {
-            throw new PlantException("Datum zalití nemůže nastat dřív než datum zasazení.");
+            throw new PlantException("Datum zalití nemůže být dřív než datum zasazení.");
         }
         this.name = name;
         this.notes = notes;
         this.frequencyOfWatering = frequencyOfWatering;
-        setFrequencyOfWateringException(BigDecimal.valueOf(this.frequencyOfWatering));
+        this.frequencyOfWateringException = frequencyOfWatering;
         this.planted = planted;
         this.watering = watering;
-        setDateOfLastWatering(this.watering);
+        this.dateOfLastWatering = watering;
     }
 
-    public Plant(String name, String notes, Integer frequencyOfWatering, LocalDate watering, LocalDate planted, BigDecimal frequencyOfWateringException, LocalDate dateOfLastWatering) {
-        this.name = name;
-        this.notes = "";
-        this.frequencyOfWatering = 7;
-        this.planted = LocalDate.now();
-        this.watering = LocalDate.now();
-        this.frequencyOfWateringException = frequencyOfWateringException;
-        setDateOfLastWatering(this.watering);
+
+    public Plant(String name, Integer frequencyOfWatering) throws PlantException {
+        this(name, "", frequencyOfWatering, LocalDate.now(), LocalDate.now());
+    }
+
+
+    public Plant(String name) throws PlantException {
+        this(name, "", 7, LocalDate.now(), LocalDate.now());
     }
 
 
     public Plant(String[] textValues, int lineNumber) throws PlantException {
         final int EXPECTED_LENGTH = 5;
         if (textValues.length != EXPECTED_LENGTH) {
-            throw new PlantException(
-                    "Řádek " + lineNumber + " musí mít " + EXPECTED_LENGTH + " hodnot: " + textValues);
+            throw new PlantException("Řádek " + lineNumber + " musí mít " + EXPECTED_LENGTH + " hodnot: " + String.join(", ", textValues));
         }
 
         try {
@@ -54,31 +52,35 @@ public class Plant implements Comparable<Plant> {
             this.frequencyOfWatering = Integer.parseInt(textValues[2].trim());
             this.planted = LocalDate.parse(textValues[3].trim());
             this.watering = LocalDate.parse(textValues[4].trim());
-            setFrequencyOfWateringException(BigDecimal.valueOf(this.frequencyOfWatering));
 
-            setDateOfLastWatering(this.watering);
+            if (frequencyOfWatering <= 0) {
+                throw new PlantException("Frekvence musí být vyšší než 0 na řádku " + lineNumber);
+            }
+            if (watering.isBefore(planted)) {
+                throw new PlantException("Zalití nemůže být před zasazením na řádku " + lineNumber);
+            }
+
+            this.frequencyOfWateringException = frequencyOfWatering;
+            this.dateOfLastWatering = watering;
+
         } catch (NumberFormatException e) {
-            throw new PlantException("Chyba pri převodu textoveho řetězce na číslo " + lineNumber + ": " + e.getMessage());
+            throw new PlantException("Chyba při převodu čísla na řádku " + lineNumber + ": " + e.getMessage());
         } catch (DateTimeParseException e) {
-            throw new PlantException("Chyba při parsování dat na řádku " + lineNumber + ": " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            throw new PlantException("Chyba při parsování kategorie na řádku " + lineNumber + ": " + e.getMessage());
+            throw new PlantException("Chyba při parsování data na řádku " + lineNumber + ": " + e.getMessage());
         }
     }
 
     public String getWateringInfo() {
         LocalDate nextWatering = watering.plusDays(frequencyOfWatering);
-        return ("Rostlina " + name + " byla naposledy zalita " + watering + ".\nDoporučené příští zalití je: " + nextWatering + ".");
+        return "Rostlina " + name + " byla naposledy zalita " + watering + ".\nDoporučené příští zalití je: " + nextWatering + ".";
     }
 
     public void doWateringNow() {
         this.watering = LocalDate.now();
-        setDateOfLastWatering(this.watering);
+        this.dateOfLastWatering = this.watering;
     }
 
 
-
-    // Gettery a settery
     public String getNotes() {
         return notes;
     }
@@ -116,12 +118,19 @@ public class Plant implements Comparable<Plant> {
     }
 
     public void setFrequencyOfWatering(Integer frequencyOfWatering) {
+        if (frequencyOfWatering == null || frequencyOfWatering <= 0) {
+            throw new IllegalArgumentException("Frekvence musí být větší než 0.");
+        }
         this.frequencyOfWatering = frequencyOfWatering;
     }
 
-    public void setFrequencyOfWateringException(BigDecimal frequencyOfWateringException) throws PlantException {
-        if (frequencyOfWateringException.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new PlantException("Frekvence nemůže být záporná nebo nulová.");
+    public Integer getFrequencyOfWateringException() {
+        return frequencyOfWateringException;
+    }
+
+    public void setFrequencyOfWateringException(Integer frequencyOfWateringException) {
+        if (frequencyOfWateringException == null || frequencyOfWateringException <= 0) {
+            throw new IllegalArgumentException("Výjimková frekvence musí být větší než 0.");
         }
         this.frequencyOfWateringException = frequencyOfWateringException;
     }
@@ -149,6 +158,14 @@ public class Plant implements Comparable<Plant> {
 
     @Override
     public String toString() {
-        return "Plant{" + "name='" + name + '\'' + ", notes='" + notes + '\'' + ", planted=" + planted + ", watering=" + watering + ", frequencyOfWatering=" + frequencyOfWatering + ", frequencyOfWateringException=" + frequencyOfWateringException + ", dateOfLastWatering=" + dateOfLastWatering + '}';
+        return "Plant{" +
+                "name='" + name + '\'' +
+                ", notes='" + notes + '\'' +
+                ", planted=" + planted +
+                ", watering=" + watering +
+                ", frequencyOfWatering=" + frequencyOfWatering +
+                ", frequencyOfWateringException=" + frequencyOfWateringException +
+                ", dateOfLastWatering=" + dateOfLastWatering +
+                '}';
     }
 }
