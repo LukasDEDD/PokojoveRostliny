@@ -27,14 +27,19 @@ public class Plant implements Comparable<Plant> {
         setFrequencyOfWateringException(BigDecimal.valueOf(this.frequencyOfWatering));
         this.planted = planted;
         this.watering = watering;
-
         setDateOfLastWatering(this.watering);
     }
 
-    public Plant(String name) {
+    public Plant(String name, String notes, Integer frequencyOfWatering, LocalDate watering, LocalDate planted, BigDecimal frequencyOfWateringException, LocalDate dateOfLastWatering) {
         this.name = name;
+        this.notes = "";
         this.frequencyOfWatering = 7;
+        this.planted = LocalDate.now();
+        this.watering = LocalDate.now();
+        this.frequencyOfWateringException = frequencyOfWateringException;
+        setDateOfLastWatering(this.watering);
     }
+
 
     public Plant(String[] textValues, int lineNumber) throws PlantException {
         final int EXPECTED_LENGTH = 5;
@@ -71,13 +76,7 @@ public class Plant implements Comparable<Plant> {
         setDateOfLastWatering(this.watering);
     }
 
-    public Plant() {
-        this.notes = "";
-        this.frequencyOfWatering = 7;
-        this.planted = LocalDate.now();
-        this.watering = LocalDate.now();
-        setDateOfLastWatering(this.watering);
-    }
+
 
     // Gettery a settery
     public String getNotes() {
